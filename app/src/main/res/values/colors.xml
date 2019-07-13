@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#327ffc</color>
+    <color name="colorNeutral">#327ffc</color>
+    <color name="colorPrimaryDark">#00050f</color>
+    <color name="colorAccent">#ff8308</color>
+    <color name="colorWhitish">#e2e2e2</color>
+    <color name="colorTransparent">#00e2e2e2</color>
+
+    <color name="colorWarning">#f2780c</color>
+    <color name="colorDanger">#fa2020</color>
+    <color name="colorOkay">#44fa41</color>
+</resources>
