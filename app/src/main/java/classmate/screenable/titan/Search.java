@@ -1,5 +1,6 @@
 package classmate.screenable.titan;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,8 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,21 +22,32 @@ import java.util.ArrayList;
 
 public class Search extends AppCompatActivity {
     MyRecyclerViewAdapter adapter;
-    ArrayList<String> items=new ArrayList<>();
+    RecyclerView recyclerView;
+    static ArrayList<String> items=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+
+        recyclerView = (RecyclerView) findViewById(R.id.video_results);
         SearchView searchView = (SearchView) findViewById(R.id.searchmaterial);
-        searchView.setQuery("Search Material",false);
+        searchView.setQueryHint("Search Material");
+        int id =  searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = (TextView) searchView.findViewById(id);
+
+// Set search text color
+        textView.setTextColor(Color.WHITE);
+
+// Set search hints color
+        textView.setHintTextColor(Color.GRAY);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.w("TODO",query+" see");
 
-//                new SearchYouTube().execute(query);
-                new SearchSlideShare().execute(query);
+                new SearchYouTube().execute(query);
+//                new SearchSlideShare().execute(query);
 
                 return false;
             }
@@ -50,34 +64,43 @@ public class Search extends AppCompatActivity {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.video_results);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new MyRecyclerViewAdapter(this, items);
-//        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
     }
-    public static class SearchSlideShare extends AsyncTask<String,Integer,String>{
+    public class SearchSlideShare extends AsyncTask<String,Integer,String>{
         @Override
         protected String doInBackground(String... strings) {
             try{
-                new SlideShare().access(strings[0]);
+                JSONArray array = new SlideShare().access(strings[0]);
+                for (int i = 0; i < array.length(); i++) {
+                    items.add(array.getString(i));
+                }
             }catch (Exception e){
+
                 Log.w("SLIDESHARE",e.toString());
             }
 
             return null;
         }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            adapter = new MyRecyclerViewAdapter(getApplicationContext(), items,"slideshare");
+//        adapter.setClickListener(this);
+            recyclerView.setAdapter(adapter);
+        }
     }
-    public static class SearchYouTube extends AsyncTask<String,Integer,String>{
+    public class SearchYouTube extends AsyncTask<String,Integer,String>{
         @Override
         protected String doInBackground(String... strings) {
             try {
                 JSONObject result=  new YouTube().access(strings[0]);
                 Log.w("TODO","gere"+result.toString());
                 JSONArray arr_items = result.getJSONArray("items");
+                Log.w("TODO",arr_items.length()+"ppp");
                 for (int i = 0;i<arr_items.length();i++){
-                    arr_items.put(arr_items.get(i));
+                    items.add(arr_items.get(i).toString());
                     Log.w("5TODO",arr_items.get(i).toString());
                 }
 
@@ -85,6 +108,17 @@ public class Search extends AppCompatActivity {
                 Log.w("TODO",e.toString());
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+
+            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+            adapter = new MyRecyclerViewAdapter(getApplicationContext(), items,"youtube");
+//        adapter.setClickListener(this);
+            recyclerView.setAdapter(adapter);
         }
     }
 }

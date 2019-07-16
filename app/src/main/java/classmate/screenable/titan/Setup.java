@@ -82,14 +82,14 @@ public class Setup extends AppCompatActivity {
         protected String doInBackground(String... strings) {
 //            stage one -- registration details
             try {
-//                Pair<Boolean,Integer> registration =  new getRegFormDetails(getApplicationContext()).startConnect();
-//                publishProgress(1);
-//
-//
-//                Pair<Boolean,Integer> courses =  new GetCourses(getApplicationContext()).startConnect();
-//                publishProgress(2);
-//                Pair<Boolean,Integer> ca =  new GetCA(getApplicationContext()).startConnect();
-//                publishProgress(3);
+                Pair<Boolean,Integer> registration =  new getRegFormDetails(getApplicationContext()).startConnect();
+                publishProgress(1);
+
+
+                Pair<Boolean,Integer> courses =  new GetCourses(getApplicationContext()).startConnect();
+                publishProgress(2);
+                Pair<Boolean,Integer> ca =  new GetCA(getApplicationContext()).startConnect();
+                publishProgress(3);
                 Pair<Boolean,Integer> reg_on_screenable =  new RegOnClassmateDbAndGetClasses().access(getApplicationContext());
 //                Pair<Boolean,Integer> contact =  new GetLecturerContacts(getApplicationContext()).startConnect();
 //                publishProgress(4);

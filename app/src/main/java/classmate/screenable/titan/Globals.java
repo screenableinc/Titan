@@ -9,7 +9,8 @@ public class Globals {
 //    youtube
     protected static String api_search_url = "https://www.googleapis.com/youtube/v3/search?";
     protected static String api_slideshare_url = "https://www.slideshare.net/api/2/search_slideshows?";
-    protected static String api_classmate_url="http://192.168.43.128:3000/classmate/setup?";
+    protected static String api_classmate_url="http://classmateapi.screenableinc.com/classmate/setup?";
+    protected static String youtube_video_watch = "https://www.youtube.com/watch?v=";
 
 
 

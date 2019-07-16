@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,7 +78,7 @@ public class Performance extends Fragment {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 LinearLayout template = (LinearLayout) inflater.inflate(R.layout.performance_template,null);
 
-                TextView course_name = (TextView) template.findViewById(R.id.course_name);
+                TextView course_name = (TextView) template.findViewById(R.id.coursename);
                 course_name.setText(array.get(i).toString().split("---",-1)[0]);
 
 

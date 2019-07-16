@@ -65,6 +65,7 @@ public class AccessPortal{
                 .method(Connection.Method.POST)
                 .userAgent(USER_AGENT)
                 .execute();
+        Log.w("TODOd",login.statusCode()+"");
         Connection.Response homePage = Jsoup.connect(target_url)
                 .cookies(cookies)
                 .method(Connection.Method.GET)

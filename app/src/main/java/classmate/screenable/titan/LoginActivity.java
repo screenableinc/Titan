@@ -69,11 +69,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
         boolean loggedin = preferences.getBoolean("loggedin",false);
 //        TODO::::remember ti remove this
-        startActivity(new Intent(LoginActivity.this,Setup.class));
-//        if (loggedin) {
-//
-//            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-//        }
+//        startActivity(new Intent(LoginActivity.this,VideoWatch.class));
+//        finish();
+        if (loggedin) {
+
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }
         mPasswordView = (EditText) findViewById(R.id.password);
 
 

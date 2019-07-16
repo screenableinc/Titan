@@ -5,7 +5,13 @@ import android.util.Log;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
 import org.xml.sax.XMLReader;
 
 import java.io.BufferedReader;
@@ -21,7 +27,7 @@ import javax.crypto.EncryptedPrivateKeyInfo;
 import javax.net.ssl.HttpsURLConnection;
 
 public class SlideShare  {
-     public JSONObject access(String q) throws Exception{
+     public JSONArray access(String q) throws Exception{
          List<String> paramList = new ArrayList<String>();
          long unixTime = System.currentTimeMillis() / 1000L;
          final HashCode hashCode = Hashing.sha1().hashString(ApiKeys.shared_secret_slideshare+unixTime, Charset.defaultCharset());
@@ -50,11 +56,30 @@ public class SlideShare  {
              response.append(inputLine);
          }
             in.close();
+         Document doc = Jsoup.parse(response.toString(), "",Parser.xmlParser());
+           Elements slideshows=doc.select("SlideShow");
+           JSONArray data = new JSONArray();
+         for (int i = 0; i < slideshows.size(); i++) {
+             JSONObject object = new JSONObject();
+             object.put("id",slideshows.get(i).select("ID").text());
+             object.put("title",slideshows.get(i).select("Title").text());
+             object.put("thumbnailurl",slideshows.get(i).select("ThumbnailURL").text());
+             object.put("format",slideshows.get(i).select("format").text());
+             object.put("downloadable",slideshows.get(i).select("Download").text());
+             object.put("url",slideshows.get(i).select("DownloadUrl").text());
+             object.put("slideshowtype",slideshows.get(i).select("SlideshowType").text());
+             data.put(object);
+         }
 
-        Log.w("SLIDESHARE",response.toString());
+        Log.w("SLIDESHARE",data.toString()+"");
 //
 //            Log.w("TODO",response.toString());
 //            return new JSONObject(response.toString());
+         return data;
+    }
+
+    private String getValue(){
+
          return null;
     }
 }
