@@ -1,7 +1,9 @@
 package classmate.screenable.titan;
 
+import android.accounts.NetworkErrorException;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -96,8 +99,14 @@ public class Setup extends AppCompatActivity {
 //                no error proceed to main page
                 startActivity(new Intent(Setup.this,MainActivity.class));
                 finish();
-            }catch (Exception e){
-                Log.w("SETUP_TODO",e.toString());
+            }catch (NetworkErrorException e){
+                Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+            }
+            catch (Exception e){
+                Log.w("ERRORLOG",e.toString());
+                new ErrorRecorder(getApplicationContext(),e,"high");
+
+//                Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
             }
 
             return null;

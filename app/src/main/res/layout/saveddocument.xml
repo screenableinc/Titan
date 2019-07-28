@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
                 android:scaleType="fitXY"
-                app:srcCompat="@drawable/vid_thumbnail" />
+                app:srcCompat="@android:drawable/gallery_thumb" />
         </FrameLayout>
 
         <LinearLayout
@@ -44,17 +44,17 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
-
         <FrameLayout
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_gravity="center">
+            android:layout_width="wrap_content"
+            android:layout_height="50dp">
 
             <ImageView
-                android:id="@+id/source"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                app:srcCompat="@drawable/youtube_logo" />
+                android:id="@+id/download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_file_download_black_24dp" />
         </FrameLayout>
 
         <FrameLayout
@@ -62,11 +62,11 @@
             android:layout_height="50dp">
 
             <ImageView
-                android:id="@+id/options"
+                android:id="@+id/delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                app:srcCompat="@drawable/options" />
+                app:srcCompat="@drawable/ic_delete_black_24dp" />
         </FrameLayout>
 
 
@@ -81,4 +81,3 @@
 
 
 </LinearLayout>
-

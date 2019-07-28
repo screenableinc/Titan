@@ -75,7 +75,7 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:text="ECA1713710"
+                    android:text="ECF1712794"
                     android:textColor="@android:color/darker_gray"
                     android:textColorHint="@android:color/background_light" />
 
@@ -99,7 +99,7 @@
                     android:maxLines="1"
                     android:shadowColor="@android:color/darker_gray"
                     android:singleLine="true"
-                    android:text="w1530977"
+                    android:text="218"
                     android:textColor="@android:color/darker_gray"
                     android:textColorHint="@android:color/darker_gray" />
 

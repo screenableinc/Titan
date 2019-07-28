@@ -2,6 +2,7 @@ package classmate.screenable.titan;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -58,6 +60,13 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
 
         LinearLayout goto_search = (LinearLayout) findViewById(R.id.search_go);
+        LinearLayout goto_library = (LinearLayout) findViewById(R.id.go_to_library);
+        goto_library.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(),LibraryActivity.class));
+            }
+        });
         goto_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,4 +173,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
 }

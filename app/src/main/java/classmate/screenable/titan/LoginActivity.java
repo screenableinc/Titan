@@ -1,5 +1,6 @@
 package classmate.screenable.titan;
 
+import android.accounts.NetworkErrorException;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -69,14 +70,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
         boolean loggedin = preferences.getBoolean("loggedin",false);
 //        TODO::::remember ti remove this
-//        startActivity(new Intent(LoginActivity.this,VideoWatch.class));
+//        startActivity(new Intent(LoginActivity.this,LibraryActivity.class));
 //        finish();
         if (loggedin) {
 
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
         mPasswordView = (EditText) findViewById(R.id.password);
-
+        new SendErrors(getApplicationContext()).execute();
 
 
          mEmailSignInButton= (Button) findViewById(R.id.email_sign_in_button);
@@ -274,7 +275,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                    return credential error
                     Toast.makeText(getApplicationContext(),"Error with credentials", Toast.LENGTH_LONG).show();
                 }
+            }catch (NetworkErrorException e){
+                Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
             }catch (Exception e){
+
+                new ErrorRecorder(getApplicationContext(),e,"high");
+                Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
 
             }
             return false;

@@ -1,8 +1,10 @@
 package classmate.screenable.titan;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
+import android.content.SharedPreferences;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,8 +16,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -24,15 +27,22 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     private List<String> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    AlertDialog.Builder builder;
     Context context;
     String _source;
+    List<String> course_names;
+    List<String> course_codes;
 
     // data is passed into the constructor
-    MyRecyclerViewAdapter(Context context, List<String> data, String source) {
+    MyRecyclerViewAdapter(Context context, List<String> data, String source, List<String> course_names,List<String> course_codes) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.context=context;
         this._source=source;
+        this.course_codes=course_codes;
+        this.course_names=course_names;
+
+
     }
 
 
@@ -63,19 +73,52 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 Picasso.get().load(thumb_url).into(holder.thumbnail);
             }else if (_source.equals("slideshare")){
                 holder.title.setText(item.getString("title"));
-                Log.w("SLIDE",item.getString("thumbnailurl").replaceAll("\\\\",""));
+                Log.w("SLIDE",item.toString());
 
                 holder.source.setImageDrawable(context.getResources().getDrawable(R.drawable.slideshare_logosmall));
                 Picasso.get().load("http:"+item.getString("thumbnailurl").replaceAll("\\\\","")).into(holder.thumbnail);
 
             }
-            holder.options.setImageDrawable(context.getResources().getDrawable(R.drawable.options));
+
+            holder.options.setTag(item);
+            holder.options.setImageDrawable(context.getResources().getDrawable(R.drawable.add_to));
 
 //            holder.myTextView.setText(animal);
             }catch (Exception e){
                 Log.w("TODO",e.toString());
             }
 
+    }
+
+
+    private void createDialog(final Object tag){
+
+        builder=new AlertDialog.Builder(context).setItems(course_names.toArray(new String[course_names.size()]), new DialogInterface.OnClickListener() {
+            String category="";
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    SharedPreferences.Editor editor = context.getSharedPreferences("library", Context.MODE_PRIVATE).edit();
+                    SharedPreferences preferences = context.getSharedPreferences("library", Context.MODE_PRIVATE);
+
+
+                    if (_source.equals("youtube")) {
+                        category = Globals.CATEGORY_VID_SHAREDPREF_KEY_NAME;
+                    }else {
+                        category = Globals.CATEGORY_SLIDE_SHAREDPREF_KEY_NAME;
+                    }
+
+                    JSONArray array=new JSONArray(preferences.getString(category,"[]"));
+                    array.put(tag.toString());
+
+                    editor.putString(category, array.toString());
+                    editor.commit();
+                }catch (JSONException e){
+
+                }
+            }
+        });
+        builder.create().show();
     }
 
     // total number of rows
@@ -101,9 +144,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             source=(ImageView) itemView.findViewById(R.id.source);
             title = (TextView) itemView.findViewById(R.id.title);
             title_and_shii.setOnClickListener(this);
+            options.setOnClickListener(this);
 
 
         }
+
+
 
         @Override
         public void onClick(View view) {
@@ -111,6 +157,10 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 //            go to video view
             if (view.getId()==R.id.clickable){
                 context.startActivity(new Intent(context,VideoWatch.class).putExtra("videoId",view.getTag().toString()));
+            }else if (view.getId()==R.id.options){
+                Log.w("TODO","Should have started");
+                createDialog(view.getTag());
+
             }
 
             if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());

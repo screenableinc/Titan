@@ -24,6 +24,7 @@ public class YouTube {
         paramList.add("key="+ApiKeys.api_key_youtube);
         paramList.add("part=snippet");
         paramList.add("type=video");
+        paramList.add("videoCategoryId=27");
         paramList.add("maxResults=20");
         String q_string = params(paramList);
         Log.w("TODO", q_string);

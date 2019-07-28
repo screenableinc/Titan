@@ -1,5 +1,9 @@
 package classmate.screenable.titan;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * Created by Wise on 10/26/2017.
  */
@@ -7,10 +11,14 @@ package classmate.screenable.titan;
 public class Globals {
 
 //    youtube
+//    protected static String prefix="http://classmateapi.screenableinc.com";
+    protected static String prefix="http://192.168.10.101:3000";
     protected static String api_search_url = "https://www.googleapis.com/youtube/v3/search?";
     protected static String api_slideshare_url = "https://www.slideshare.net/api/2/search_slideshows?";
-    protected static String api_classmate_url="http://classmateapi.screenableinc.com/classmate/setup?";
+    protected static String api_classmate_url=prefix+"/setup?";
+    protected static String api_error_report=prefix+"/reportError?";
     protected static String youtube_video_watch = "https://www.youtube.com/watch?v=";
+    protected static String folder = Environment.getExternalStorageDirectory() + File.separator + "classmate";
 
 
 
@@ -20,6 +28,8 @@ public class Globals {
     protected static final String portal = "https://sms.unilus.ac.zm/Students/StudentPortal.aspx";
 
     protected static final String id_keyName = "student_id";
+    protected static final String CATEGORY_VID_SHAREDPREF_KEY_NAME = "videos";
+    protected static final String CATEGORY_SLIDE_SHAREDPREF_KEY_NAME = "slides";
     protected static final String passwordKeyName = "password";
     protected static final String registered_courses_url = "https://sms.unilus.ac.zm/Students/Registration.aspx";
     protected static final String materials_url = "https:/sms.unilus.ac.zm/Students/Materials.aspx";

@@ -15,6 +15,8 @@ public class Classes {
         this.context=context;
     }
     public JSONObject getFreeClasses()throws Exception {
+
+//        TODO::: get free classes from server too
         Resources resources = context.getResources();
         InputStreamReader read = new InputStreamReader(resources.openRawResource(R.raw.free_classes));
         BufferedReader reader = new BufferedReader(read);

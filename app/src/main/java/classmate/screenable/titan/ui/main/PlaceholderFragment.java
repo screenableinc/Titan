@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
+import classmate.screenable.titan.Globals;
 import classmate.screenable.titan.R;
 
 /**
@@ -19,6 +20,7 @@ import classmate.screenable.titan.R;
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
+
 
     private PageViewModel pageViewModel;
 
