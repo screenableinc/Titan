@@ -95,6 +95,17 @@ public class AccessPortal{
 
     }
 
+//    public boolean PostForMaterial() throws Exception{
+//        Connection.Response materialsForm = Jsoup.connect(Globals.materials_url).method(Connection.Method.GET).userAgent(USER_AGENT).execute();
+//        Document materialDoc = materialsForm.parse();
+//
+//        Element eventValidation = materialDoc.select("input[name=__EVENTVALIDATION]").first();
+//        Element viewState = materialDoc.select("input[name=__VIEWSTATE]").first();
+//        Element viewStategen = materialDoc.select("input[name=__VIEWSTATEGENERATOR]").first();
+//
+//
+//    }
+
     public boolean LoginPage(Document document){
         if(document.getElementById("MainContent_Button1")==null){
             return false;

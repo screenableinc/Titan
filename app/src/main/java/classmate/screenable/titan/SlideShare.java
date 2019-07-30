@@ -1,5 +1,6 @@
 package classmate.screenable.titan;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.common.hash.HashCode;
@@ -29,7 +30,8 @@ import javax.crypto.EncryptedPrivateKeyInfo;
 import javax.net.ssl.HttpsURLConnection;
 
 public class SlideShare  {
-     public JSONArray access(String q) throws Exception{
+//    the following code can be optimised to avoid repitition
+     public JSONArray access(String q, Context context) throws Exception{
          List<String> paramList = new ArrayList<String>();
          long unixTime = System.currentTimeMillis() / 1000L;
          final HashCode hashCode = Hashing.sha1().hashString(ApiKeys.shared_secret_slideshare+unixTime, Charset.defaultCharset());
@@ -43,7 +45,7 @@ public class SlideShare  {
         String q_string = new YouTube().params(paramList);
         Log.w("TODO", q_string);
 
-         URL Obj = new URL(Globals.api_slideshare_url+q_string);
+         URL Obj = new URL(Globals.api_slideshare_url+"search_slideshows?"+q_string);
 //        TODO: set connection timeout
          HttpsURLConnection conn = (HttpsURLConnection) Obj.openConnection();
          HttpParams httpParams = new HttpParams() {
@@ -139,24 +141,78 @@ public class SlideShare  {
          for (int i = 0; i < slideshows.size(); i++) {
              int downloadable = Integer.parseInt(slideshows.get(i).select("Download").text());
              JSONObject object = new JSONObject();
-             object.put("id",slideshows.get(i).select("ID").text());
+             String id  = slideshows.get(i).select("ID").text();
+             boolean exists = new SQL_INTERACT(context).SQLEntryExists(null, id, FeedReaderContract.FeedEntry.TABLE_NAME);
+             if(exists){
+                 continue;
+             }
+             object.put("id",id);
              object.put("title",slideshows.get(i).select("Title").text());
              object.put("thumbnailurl",slideshows.get(i).select("ThumbnailSmallURL").text());
              object.put("format",slideshows.get(i).select("format").text());
+             object.put("s_title",slideshows.get(i).select("StrippedTitle").text());
              object.put("downloadable",downloadable);
+             object.put("downloaded",false);
+             object.put("path","");
+
              object.put("url",slideshows.get(i).select("DownloadUrl").text());
              object.put("slideshowtype",slideshows.get(i).select("SlideshowType").text());
              data.put(object);
 
 
-             Log.w("URLS",slideshows.get(i).select("DownloadUrl").text());
+             Log.w("TODO",object.getString("s_title")+"should have logged");
          }
 
-        Log.w("SLIDESHARE",data.toString()+"");
+
 //
 //            Log.w("TODO",response.toString());
 //            return new JSONObject(response.toString());
          return data;
+    }
+    public String getSlideShow(String id) throws Exception{
+        List<String> paramList = new ArrayList<String>();
+        long unixTime = System.currentTimeMillis() / 1000L;
+        final HashCode hashCode = Hashing.sha1().hashString(ApiKeys.shared_secret_slideshare+unixTime, Charset.defaultCharset());
+
+
+        paramList.add("slideshow_id="+ id);
+        paramList.add("api_key="+ApiKeys.api_key_slideshare);
+        paramList.add("ts="+unixTime);
+        paramList.add("hash="+hashCode);
+
+        String q_string = new YouTube().params(paramList);
+
+
+        URL Obj = new URL(Globals.api_slideshare_url+"get_slideshow?"+q_string);
+//        TODO: set connection timeout
+        HttpsURLConnection conn = (HttpsURLConnection) Obj.openConnection();
+        System.setProperty("http.keepAlive", "false");
+
+        conn.setConnectTimeout(3000);
+
+
+        int responseCode = conn.getResponseCode();
+
+
+//         todo at futsal read xml
+        BufferedReader in =
+                new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+        Document doc = Jsoup.parse(response.toString(), "",Parser.xmlParser());
+
+        String download_url = "";
+
+        download_url=doc.select("DownloadUrl").text();
+//
+//            Log.w("TODO",response.toString());
+//            return new JSONObject(response.toString());
+        return download_url;
     }
 
     private String getValue(){

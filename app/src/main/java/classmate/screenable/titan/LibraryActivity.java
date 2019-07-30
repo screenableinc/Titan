@@ -55,6 +55,10 @@ public class LibraryActivity extends AppCompatActivity {
                     return new DocumentFragment();
                 case 1:
                     return new VideosFragment();
+                case 2:
+                    return new PastPapersFragment();
+                case 3:
+                    return new AssignmentsFragment();
                 default:
                     return null;
             }
@@ -63,7 +67,7 @@ public class LibraryActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 4;
         }
 
         @Override
@@ -75,6 +79,11 @@ public class LibraryActivity extends AppCompatActivity {
                     return "Documents";
                 case 1:
                     return "Videos";
+                case 2:
+                    return "Assignments";
+                case 3:
+                    return "Past Papers";
+
 
             }
             return null;

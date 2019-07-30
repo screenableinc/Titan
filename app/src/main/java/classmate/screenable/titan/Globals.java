@@ -11,21 +11,23 @@ import java.io.File;
 public class Globals {
 
 //    youtube
-//    protected static String prefix="http://classmateapi.screenableinc.com";
-    protected static String prefix="http://192.168.10.101:3000";
+    protected static String prefix="http://classmateapi.screenableinc.com";
+//    protected static String prefix="http://192.168.10.101:3000";
     protected static String api_search_url = "https://www.googleapis.com/youtube/v3/search?";
-    protected static String api_slideshare_url = "https://www.slideshare.net/api/2/search_slideshows?";
+    protected static String api_slideshare_url = "https://www.slideshare.net/api/2/";
     protected static String api_classmate_url=prefix+"/setup?";
     protected static String api_error_report=prefix+"/reportError?";
     protected static String youtube_video_watch = "https://www.youtube.com/watch?v=";
     protected static String folder = Environment.getExternalStorageDirectory() + File.separator + "classmate";
-
-
+    protected static String profile_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+File.separator+"profile";
+    protected static String unilus_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+File.separator+"unilus";
+    protected static String slideshare_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+ File.separator+"slideshare";
 
 
     protected static final String theme_lawrencium = "lawrencium";
     protected static final String host = "https://www.unilus.ac.zm";
     protected static final String portal = "https://sms.unilus.ac.zm/Students/StudentPortal.aspx";
+    protected static final String material_prefix = "https://sms.unilus.ac.zm";
 
     protected static final String id_keyName = "student_id";
     protected static final String CATEGORY_VID_SHAREDPREF_KEY_NAME = "videos";

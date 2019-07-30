@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
         }
         mPasswordView = (EditText) findViewById(R.id.password);
-        new SendErrors(getApplicationContext()).execute();
+//        new SendErrors(getApplicationContext()).execute();
 
 
          mEmailSignInButton= (Button) findViewById(R.id.email_sign_in_button);

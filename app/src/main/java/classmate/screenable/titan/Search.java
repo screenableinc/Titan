@@ -116,21 +116,21 @@ public class Search extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             try{
-                JSONArray array = new SlideShare().access(strings[0]);
+                JSONArray array = new SlideShare().access(strings[0], Search.this);
                 for (int i = 0; i < array.length(); i++) {
-                    Log.w("SLIDE",array.getString(i));
+
                     items.add(array.getString(i));
                 }
             }catch (NetworkErrorException e){
                 Toast.makeText(Search.this,"Network error", Toast.LENGTH_LONG).show();
             }catch (SocketTimeoutException e){
-                Log.w("SLIDE", e.toString());
+
             }
             catch (Exception e){
                 new ErrorRecorder(Search.this,e,"high");
                 Toast.makeText(Search.this,"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
 
-                Log.w("SLIDESHARE",e.toString());
+
             }
 
             return null;

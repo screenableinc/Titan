@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -73,7 +77,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 Picasso.get().load(thumb_url).into(holder.thumbnail);
             }else if (_source.equals("slideshare")){
                 holder.title.setText(item.getString("title"));
-                Log.w("SLIDE",item.toString());
+                Log.w("SLIDE",item.getString("url"));
 
                 holder.source.setImageDrawable(context.getResources().getDrawable(R.drawable.slideshare_logosmall));
                 Picasso.get().load("http:"+item.getString("thumbnailurl").replaceAll("\\\\","")).into(holder.thumbnail);
@@ -91,7 +95,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     }
 
 
-    private void createDialog(final Object tag){
+    private void createDialog(final Object tag, final View view){
 
         builder=new AlertDialog.Builder(context).setItems(course_names.toArray(new String[course_names.size()]), new DialogInterface.OnClickListener() {
             String category="";
@@ -104,15 +108,19 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
                     if (_source.equals("youtube")) {
                         category = Globals.CATEGORY_VID_SHAREDPREF_KEY_NAME;
+                        JSONArray array=new JSONArray(preferences.getString(category,"[]"));
+                        array.put(tag.toString());
+
+                        editor.putString(category, array.toString());
+                        editor.commit();
                     }else {
                         category = Globals.CATEGORY_SLIDE_SHAREDPREF_KEY_NAME;
+//                        load async task and save to database
+                        view.setVisibility(View.GONE);
+                        new SaveToDb((ImageView) view).execute(tag.toString());
                     }
 
-                    JSONArray array=new JSONArray(preferences.getString(category,"[]"));
-                    array.put(tag.toString());
 
-                    editor.putString(category, array.toString());
-                    editor.commit();
                 }catch (JSONException e){
 
                 }
@@ -159,7 +167,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 context.startActivity(new Intent(context,VideoWatch.class).putExtra("videoId",view.getTag().toString()));
             }else if (view.getId()==R.id.options){
                 Log.w("TODO","Should have started");
-                createDialog(view.getTag());
+                createDialog(view.getTag(), view);
 
             }
 
@@ -177,8 +185,56 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         this.mClickListener = itemClickListener;
     }
 
+
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+    private class SaveToDb extends AsyncTask<Object,Integer,String>{
+        ImageView icon;
+        private SaveToDb(ImageView icon ){
+            this.icon=icon;
+        }
+
+        @Override
+        protected String doInBackground(Object... objects) {
+            try{
+                boolean success = new SQL_INTERACT(context).SQLPush(objects[0].toString());
+                if(success) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            icon.setImageDrawable(context.getResources().getDrawable(R.drawable.checked));
+                            icon.setOnClickListener(null);
+                            icon.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            icon.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
+
+
+            }catch (Exception e){
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        icon.setVisibility(View.VISIBLE);
+                    }
+                });
+                Toast.makeText(context,"failed to add to playlist",Toast.LENGTH_SHORT).show();
+            }
+
+            return null;
+        }
     }
 }
