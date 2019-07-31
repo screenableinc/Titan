@@ -28,6 +28,7 @@ public class Globals {
     protected static final String host = "https://www.unilus.ac.zm";
     protected static final String portal = "https://sms.unilus.ac.zm/Students/StudentPortal.aspx";
     protected static final String material_prefix = "https://sms.unilus.ac.zm";
+    protected static final String portal_pic ="https://sms.unilus.ac.zm/UserImages/";
 
     protected static final String id_keyName = "student_id";
     protected static final String CATEGORY_VID_SHAREDPREF_KEY_NAME = "videos";

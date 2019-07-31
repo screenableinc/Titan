@@ -76,7 +76,15 @@ public class SQL_INTERACT {
 
     }
 
+    public boolean DeleteEntry(String id, String table, String where) throws Exception{
 
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+
+
+        return db.delete(table, where + "='" + id+"'", null)>0;
+    }
 
     public boolean SQLEntryExists(String [] projection, String id, String table){
         FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
@@ -193,12 +201,12 @@ public class SQL_INTERACT {
 
 
     }
-    public boolean setPath(String id, String path) throws Exception{
+    public boolean setPath(String id, String path, String table) throws Exception{
         FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH,path);
-        long newRowId =  db.update(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME, values, FeedReaderContract.FeedEntry.COLUMN_NAME_ID+"='"+id+"'",null);
+        long newRowId =  db.update(table, values, FeedReaderContract.FeedEntry.COLUMN_NAME_ID+"='"+id+"'",null);
 
         if(newRowId==-1){
             throw new CustomException("Error on log material into db unilus");

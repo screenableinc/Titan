@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 
@@ -89,6 +90,10 @@ public class DownloadFile extends AsyncTask {
             String format = conn.getContentType().split("/",-1)[1];
 
             filename = filename.replace("."+format,"."+format);
+            if(!filename.toLowerCase().contains("."+format)){
+//                filename=filename;
+                filename=filename+"."+format;
+            }
 
             int lengthOfFile = conn.getContentLength();
             InputStream input = new BufferedInputStream(url.openStream(),8192);
@@ -133,7 +138,13 @@ public class DownloadFile extends AsyncTask {
             // closing streams
             output.close();
             input.close();
-            new SQL_INTERACT(context).setPath(id,path);
+            String table;
+            if(source.equals("slideshare")){
+                table= FeedReaderContract.FeedEntry.TABLE_NAME;
+            }else {
+                table= FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME;
+            }
+            new SQL_INTERACT(context).setPath(id,path,table);
 
             Handler handler = new Handler(Looper.getMainLooper());
             handler.post(new Runnable() {
@@ -154,6 +165,7 @@ public class DownloadFile extends AsyncTask {
                 public void run() {
                     downloadIcon.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
+                    Toast.makeText(context,"Download failed",Toast.LENGTH_LONG).show();
                 }
             });
             Log.w("DOWNLOADTASK",e.toString());

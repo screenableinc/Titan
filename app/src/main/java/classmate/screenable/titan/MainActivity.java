@@ -2,6 +2,8 @@ package classmate.screenable.titan;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private CircleImageView profile_image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +59,30 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        SharedPreferences preferences = getSharedPreferences("setup",MODE_PRIVATE);
-        String program = preferences.getString("program",null);
-        while (program.startsWith(" ")){
-            program=program.substring(1);
+        profile_image = (CircleImageView) findViewById(R.id.profile_image);
+        SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
+        File path = new File(Globals.profile_folder+File.separator+preferences.getString(Globals.id_keyName,"")+".jpg");
+        if(path.exists()){
+//            Picasso.get().load(path).resize(50,50).onlyScaleDown().into(profile_image);
+            Bitmap bitmapImage = BitmapFactory.decodeFile(path.toString());
+            int nh = (int) ( bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()) );
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, 50, 50, true);
+            profile_image.setImageBitmap(scaled);
+        }else {
+            new DownloadProfileImage().execute();
         }
-        Log.w("TEST","GORP"+program);
+
+//        String program = preferences.getString("program",null);
+//        while (program.startsWith(" ")){
+//            program=program.substring(1);
+//        }
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         LinearLayout goto_search = (LinearLayout) findViewById(R.id.search_go);
         LinearLayout goto_library = (LinearLayout) findViewById(R.id.go_to_library);
+
         goto_library.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,6 +192,14 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return "Performance";
             }
+            return null;
+        }
+    }
+
+    private class DownloadProfileImage extends AsyncTask{
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            new classmate.screenable.titan.DownloadProfileImage(MainActivity.this).download(profile_image);
             return null;
         }
     }

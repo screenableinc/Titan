@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.squareup.picasso.Picasso;
@@ -67,7 +70,16 @@ public class DocumentFragment extends Fragment {
         return rootView;
     }
 
-    private void LoadVideos(final LinearLayout parent, final JSONArray jsonOfDocuments) throws Exception{
+    private void openFile(String path){
+        Intent myIntent = new Intent(Intent.ACTION_VIEW);
+        File file = new File(path);
+        myIntent.setData(FileProvider.getUriForFile(getActivity(),BuildConfig.APPLICATION_ID+".provider",file));
+        Intent j = Intent.createChooser(myIntent, "Choose an application to open with:");
+        startActivity(j);
+
+    }
+
+    private void LoadSlideShareDocs(final LinearLayout parent, final JSONArray jsonOfDocuments) throws Exception{
 
 
         for (int i = 0; i < jsonOfDocuments.length(); i++) {
@@ -79,6 +91,8 @@ public class DocumentFragment extends Fragment {
             final ImageView ImageViewDelete = view.findViewById(R.id.delete);
             final ImageView ImageViewDownload = view.findViewById(R.id.download);
             final ImageView ImageViewDownloaded = view.findViewById(R.id.checked);
+            ImageView ImageViewSource = view.findViewById(R.id.from);
+            ImageViewSource.setImageDrawable(getResources().getDrawable(R.drawable.unilus));
             final CircularProgressBar progressBar = view.findViewById(R.id.downloadprogress);
             final ProgressBar loading = view.findViewById(R.id.loading);
             LinearLayout clickable = view.findViewById(R.id.clickable);
@@ -89,8 +103,9 @@ public class DocumentFragment extends Fragment {
             JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
             final String title = doc_details.getString("title");
             final String id  = doc_details.getString("id");
+            final String path  = doc_details.getString("path");
 
-            if(doc_details.getInt("downloadable")==1){
+            if(doc_details.getInt("downloadable")==1 && ! new File(path).exists()){
 
                 ImageViewDownload.setVisibility(View.VISIBLE);
 
@@ -111,6 +126,8 @@ public class DocumentFragment extends Fragment {
                     }
                 });
 
+            }else {
+                ImageViewDownloaded.setVisibility(View.VISIBLE);
             }
 
             ImageViewDelete.setOnClickListener(new View.OnClickListener() {
@@ -121,8 +138,9 @@ public class DocumentFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 //                            Log.e("REMOVEDDD",jsonOfVideos.remove(count).toString());
-                            saveArray(RemoveJSONArray(jsonOfDocuments,count).toString());
-                            parent.removeView(view);
+                            new deleteFromDbAndStorage(FeedReaderContract.FeedEntry.TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view).execute();
+
+
                         }
                     }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                         @Override
@@ -138,12 +156,7 @@ public class DocumentFragment extends Fragment {
 
             String thumb_url = doc_details.getString("thumbnailurl");
             textViewTitle.setText(title);
-            clickable.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-//                    startActivity(new Intent(getActivity(),VideoWatch.class).putExtra("videoId",view.getTag().toString()));
-                }
-            });
+
             Picasso.get().load("http:"+thumb_url.replaceAll("\\\\","")).into(ImageViewThumbnail);
 
             parent.addView(view);
@@ -163,11 +176,12 @@ public class DocumentFragment extends Fragment {
             final ImageView ImageViewDelete = view.findViewById(R.id.delete);
             final ImageView ImageViewDownload = view.findViewById(R.id.download);
             final ImageView ImageViewDownloaded = view.findViewById(R.id.checked);
+            ImageView ImageViewSource = view.findViewById(R.id.from);
             final CircularProgressBar progressBar = view.findViewById(R.id.downloadprogress);
             final ProgressBar loading = view.findViewById(R.id.loading);
             LinearLayout clickable = view.findViewById(R.id.clickable);
             final int count=i;
-
+            ImageViewSource.setImageDrawable(getResources().getDrawable(R.drawable.unilus));
 
 
             JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
@@ -179,6 +193,13 @@ public class DocumentFragment extends Fragment {
             File fileDirectory = new File(path);
             if (fileDirectory.exists()){
                 ImageViewDownloaded.setVisibility(View.VISIBLE);
+//                set clickable to allow open intent
+                clickable.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        openFile(path);
+                    }
+                });
             }else {
                 ImageViewDownload.setVisibility(View.VISIBLE);
 
@@ -209,8 +230,7 @@ public class DocumentFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 //                            Log.e("REMOVEDDD",jsonOfVideos.remove(count).toString());
-                        saveArray(RemoveJSONArray(jsonOfDocuments,count).toString());
-                        parent.removeView(view);
+                        new deleteFromDbAndStorage(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view).execute();
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -226,12 +246,7 @@ public class DocumentFragment extends Fragment {
 
 
         textViewTitle.setText(title);
-        clickable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                    startActivity(new Intent(getActivity(),VideoWatch.class).putExtra("videoId",view.getTag().toString()));
-            }
-        });
+
 //            Picasso.get().load("http:"+thumb_url.replaceAll("\\\\","")).into(ImageViewThumbnail);
         if(title.toLowerCase().contains("pdf")){
             ImageViewThumbnail.setImageDrawable(getResources().getDrawable(R.drawable.pdf));
@@ -246,24 +261,59 @@ public class DocumentFragment extends Fragment {
 
     }
     }
-    public void saveArray(String array){
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("library",Context.MODE_PRIVATE).edit();
-        editor.putString(Globals.CATEGORY_SLIDE_SHAREDPREF_KEY_NAME,array);
-        editor.commit();
-    }
-    public static JSONArray RemoveJSONArray( JSONArray jarray,int pos) {
 
-        JSONArray Njarray=new JSONArray();
-        try{
-            for(int i=0;i<jarray.length();i++){
-                if(i!=pos)
-                    Njarray.put(jarray.get(i));
+
+
+    private class deleteFromDbAndStorage extends AsyncTask{
+        String table;
+        String id;
+        String column;
+        String path;
+        boolean success;
+        View view;
+        View parent;
+        private boolean deleteFile(String path) throws Exception{
+            File dir = new File(Globals.folder);
+            File file=new File(dir,path);
+            file.delete();
+            return true;
+        }
+        public deleteFromDbAndStorage(String table, String id, String column,String path, View parent, View view){
+            this.table=table;this.view = view;this.parent=parent;
+            this.id=id;
+            this.path=path;
+            this.column=column;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            if(success){
+                ((LinearLayout) parent).removeView(view);
+                Toast.makeText(getActivity(),"Deleted",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects){
+
+            try {
+                boolean deleteFromdb = new SQL_INTERACT(getActivity()).DeleteEntry(id,table,column);
+                //this part is dangerously iffy
+                if (deleteFromdb || deleteFile(path)) {
+                    success=true;
+//                hanlde response
+                }
+            }catch (Exception e){
 
             }
-        }catch (Exception e){e.printStackTrace();}
-        return Njarray;
 
+
+            return null;
+        }
     }
+
+
+
 
 //    check permissions
     public boolean permissions(){
@@ -379,7 +429,7 @@ public class DocumentFragment extends Fragment {
             try {
 
 
-                LoadVideos(parent,array);
+                LoadSlideShareDocs(parent,array);
                 Log.w("TODO", array.toString()+" success");
             }catch (Exception e){
                 Log.w("TODO", e.toString());
@@ -404,19 +454,5 @@ public class DocumentFragment extends Fragment {
             return null;
         }
     }
-    public class DeleteFile extends AsyncTask{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
 
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            File dir = new File(Globals.folder);
-            File file=new File(dir,objects[0].toString());
-            file.delete();
-            return null;
-        }
-    }
 }
