@@ -17,7 +17,38 @@ public class SQL_INTERACT {
         this.context=context;
     }
 
-    public boolean SQLPushUnilusDocs(String JObject) throws Exception{
+
+    public boolean SQLPushUnilusPastPapers(String JObject, String table) throws Exception{
+
+        JSONObject object = new JSONObject(JObject);
+        FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_ID,object.getString("id"));
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE,object.getString("title"));
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_COURSE,object.getString("course"));
+
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_FORMAT,object.getString("format"));
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DOWNLOADED,object.getBoolean("downloaded")+"");
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH,object.getString("path"));
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_URL,object.getString("url"));
+//        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_FILENAME,object.getString("filename"));
+
+        long newRowId = db.insert(table, null, values);
+        if(newRowId==-1){
+            throw new CustomException("Error on log material into db unilus");
+        }else {
+            return true;
+
+        }
+
+
+
+
+
+    }
+
+    public boolean SQLPushUnilusDocs(String JObject, String table) throws Exception{
 
         JSONObject object = new JSONObject(JObject);
         FeedReaderDbHelper dbHelper = new FeedReaderDbHelper(context);
@@ -33,7 +64,7 @@ public class SQL_INTERACT {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_URL,object.getString("url"));
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_FILENAME,object.getString("filename"));
 
-        long newRowId = db.insert(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME, null, values);
+        long newRowId = db.insert(table, null, values);
         if(newRowId==-1){
             throw new CustomException("Error on log material into db unilus");
         }else {
@@ -58,6 +89,7 @@ public class SQL_INTERACT {
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_THUMBNAILURL,object.getString("thumbnailurl"));
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_FORMAT,object.getString("format"));
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DOWNLOADABLE,object.getString("downloadable"));
+        values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_COURSE,object.getString("course"));
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_DOWNLOADED,object.getBoolean("downloaded")+"");
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH,object.getString("path"));
         values.put(FeedReaderContract.FeedEntry.COLUMN_NAME_URL,object.getString("url"));
@@ -146,6 +178,9 @@ public class SQL_INTERACT {
                 String path = cursor.getString(
                         cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH
                         ));
+                String course = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_COURSE
+                        ));
                 String thumb_url = cursor.getString(
 //                    use in case file deleted
                         cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_THUMBNAILURL
@@ -160,7 +195,9 @@ public class SQL_INTERACT {
                 jsonObject.put("id", itemId);
                 jsonObject.put("title", title);
                 jsonObject.put("path", path);
+                jsonObject.put("course", course);
                 jsonObject.put("downloadable", downloadable);
+
                 jsonObject.put("thumbnailurl", thumb_url);
                 jsonObject.put("downloaded", downloaded);
             }else if(table.equals(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME)){
@@ -172,6 +209,10 @@ public class SQL_INTERACT {
                         ));
                 String path = cursor.getString(
                         cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH
+                        ));
+
+                String course = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_COURSE
                         ));
                 String format = cursor.getString(
 //                    use in case file deleted
@@ -186,6 +227,38 @@ public class SQL_INTERACT {
 
                 jsonObject.put("id", itemId);
                 jsonObject.put("title", title);
+                jsonObject.put("course", course);
+                jsonObject.put("path", path);
+                jsonObject.put("url", url);
+                jsonObject.put("format", format);
+                jsonObject.put("downloaded", downloaded);
+            }else if(table.equals(FeedReaderContract.FeedEntry.QB_TABLE_NAME)){
+                String itemId = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_ID
+                        ));
+                String title = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_TITLE
+                        ));
+                String path = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_PATH
+                        ));
+                String course = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_COURSE
+                        ));
+                String format = cursor.getString(
+//                    use in case file deleted
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_FORMAT
+                        ));
+                String url = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_URL
+                        ));
+                String downloaded = cursor.getString(
+                        cursor.getColumnIndexOrThrow(FeedReaderContract.FeedEntry.COLUMN_NAME_DOWNLOADED
+                        ));
+
+                jsonObject.put("id", itemId);
+                jsonObject.put("title", title);
+                jsonObject.put("course", course);
                 jsonObject.put("path", path);
                 jsonObject.put("url", url);
                 jsonObject.put("format", format);

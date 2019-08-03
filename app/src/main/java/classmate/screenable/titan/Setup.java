@@ -85,14 +85,17 @@ public class Setup extends AppCompatActivity {
         protected String doInBackground(String... strings) {
 //            stage one -- registration details
             try {
+                Log.w("TODO","reached here1");
                 Pair<Boolean,Integer> registration =  new getRegFormDetails(getApplicationContext()).startConnect();
                 publishProgress(1);
 
-
+                Log.w("TODO","reached here2");
                 Pair<Boolean,Integer> courses =  new GetCourses(getApplicationContext()).startConnect();
                 publishProgress(2);
+                Log.w("TODO","reached here3");
                 Pair<Boolean,Integer> ca =  new GetCA(getApplicationContext()).startConnect();
                 publishProgress(3);
+                Log.w("TODO","reached here4");
                 Pair<Boolean,Integer> reg_on_screenable =  new RegOnClassmateDbAndGetClasses().access(getApplicationContext());
 //                Pair<Boolean,Integer> contact =  new GetLecturerContacts(getApplicationContext()).startConnect();
 //                publishProgress(4);
@@ -104,6 +107,8 @@ public class Setup extends AppCompatActivity {
             }
             catch (Exception e){
                 Log.w("ERRORLOG",e.toString());
+                e.printStackTrace();
+
                 new ErrorRecorder(getApplicationContext(),e,"high");
 
 //                Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();

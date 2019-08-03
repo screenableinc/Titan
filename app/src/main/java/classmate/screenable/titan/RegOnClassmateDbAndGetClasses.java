@@ -49,6 +49,7 @@ public class RegOnClassmateDbAndGetClasses {
         String qString = qStringGen.qString(params);
 
         URL Obj = new URL(Globals.api_classmate_url+qString);
+        Log.w("TODO",Globals.api_classmate_url+qString);
 
         HttpURLConnection conn = (HttpURLConnection) Obj.openConnection();
         int responseCode = conn.getResponseCode();

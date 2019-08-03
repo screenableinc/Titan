@@ -72,6 +72,7 @@ public class AccessPortal{
                 .userAgent(USER_AGENT)
                 .execute();
         Document portal = homePage.parse();
+
         if(portal.toString().contains("Oooops!!!!!")){
             Toast.makeText(context,"Portal conjested",Toast.LENGTH_LONG).show();
             return false;

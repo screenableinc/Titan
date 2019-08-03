@@ -19,13 +19,7 @@ public class AssignmentsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.assignments, container, false);
 
         LinearLayout parent = rootView.findViewById(R.id.parent);
-        try {
 
-
-//            LoadVideos(parent);
-        }catch (Exception e){
-            Log.w("TODO", e.toString());
-        }
 
 
 

@@ -109,7 +109,9 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                     if (_source.equals("youtube")) {
                         category = Globals.CATEGORY_VID_SHAREDPREF_KEY_NAME;
                         JSONArray array=new JSONArray(preferences.getString(category,"[]"));
-                        array.put(tag.toString());
+                        JSONObject object = new JSONObject(tag.toString());
+                        object.put("course",course_names.get(i));
+                        array.put(object);
 
                         editor.putString(category, array.toString());
                         editor.commit();
@@ -117,11 +119,15 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                         category = Globals.CATEGORY_SLIDE_SHAREDPREF_KEY_NAME;
 //                        load async task and save to database
                         view.setVisibility(View.GONE);
-                        new SaveToDb((ImageView) view).execute(tag.toString());
+                        JSONObject object = new JSONObject(tag.toString());
+                        object.put("course",course_names.get(i));
+                        new SaveToDb((ImageView) view).execute(object.toString());
+                        Log.w("CC",object.toString());
                     }
 
 
                 }catch (JSONException e){
+                    e.printStackTrace();
 
                 }
             }

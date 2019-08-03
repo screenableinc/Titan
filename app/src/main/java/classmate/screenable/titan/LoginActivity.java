@@ -1,5 +1,6 @@
 package classmate.screenable.titan;
 
+import android.Manifest;
 import android.accounts.NetworkErrorException;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -47,7 +49,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_READ_WRITE = 0;
+    private String email;
+    private String password;
 
     Button mEmailSignInButton;
 
@@ -66,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.student_id);
-        populateAutoComplete();
+
         SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
         boolean loggedin = preferences.getBoolean("loggedin",false);
 //        TODO::::remember ti remove this
@@ -84,11 +88,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                String email = mEmailView.getText().toString();
-                String password = mPasswordView.getText().toString();
+                email = mEmailView.getText().toString();
+                password = mPasswordView.getText().toString();
                 mEmailSignInButton.setVisibility(View.GONE);
-                mAuthTask = new UserLoginTask(email, password);
-                mAuthTask.execute((Void) null);
+
+                if(HelperFunctions.permissions(LoginActivity.this)){
+                    new UserLoginTask(email, password).execute();
+                }else {
+                    ActivityCompat.requestPermissions(LoginActivity.this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            REQUEST_READ_WRITE);
+                    Toast.makeText(LoginActivity.this,"Allow permissions to continue",Toast.LENGTH_LONG).show();
+                }
+
+
 
             }
         });
@@ -97,35 +110,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
 
-        getLoaderManager().initLoader(0, null, this);
-    }
 
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
+
 
     /**
      * Callback received when a permissions request has been completed.
@@ -133,9 +120,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
+        if (requestCode == REQUEST_READ_WRITE) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
+                new UserLoginTask(email, password).execute();
+            }else {
+                mEmailSignInButton.setVisibility(View.VISIBLE);
             }
         }
     }

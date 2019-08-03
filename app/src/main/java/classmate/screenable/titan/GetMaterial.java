@@ -180,7 +180,7 @@ public class GetMaterial {
             innerobj.put("description",columns.get(3).text());
 
             innerobj.put("id",id);
-            interact.SQLPushUnilusDocs(innerobj.toString());
+            interact.SQLPushUnilusDocs(innerobj.toString(), FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME);
 
             length++;
 

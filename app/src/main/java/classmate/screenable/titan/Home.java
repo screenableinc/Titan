@@ -250,7 +250,7 @@ public class Home extends Fragment {
 
         }catch (Exception e){
             Log.w("TODOd",e.toString());
-            Log.w("TODOd",classes);
+
         }
     }
     public void LoadCourses(String courses){

@@ -70,20 +70,26 @@ public class DocumentFragment extends Fragment {
         return rootView;
     }
 
-    private void openFile(String path){
-        Intent myIntent = new Intent(Intent.ACTION_VIEW);
-        File file = new File(path);
-        myIntent.setData(FileProvider.getUriForFile(getActivity(),BuildConfig.APPLICATION_ID+".provider",file));
-        Intent j = Intent.createChooser(myIntent, "Choose an application to open with:");
-        startActivity(j);
+    public void LoadFromActivity(){
 
+        parent.removeAllViews();
+        new LoadDocs().execute();
+        new LoadPortalDocs().execute();
     }
 
     private void LoadSlideShareDocs(final LinearLayout parent, final JSONArray jsonOfDocuments) throws Exception{
 
 
+        String selected_course =((LibraryActivity) getActivity()).selected_course;
         for (int i = 0; i < jsonOfDocuments.length(); i++) {
 //            Log.w("decipher",jsonOfVideos.getJSONObject(i).toString());
+
+            JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
+            String course = doc_details.getString("course");
+            Log.w("TODO",course);
+            if(!course.equals(selected_course)){
+                continue;
+            }
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             final View view = inflater.inflate(R.layout.saveddocument,null);
             TextView textViewTitle = view.findViewById(R.id.title);
@@ -100,7 +106,7 @@ public class DocumentFragment extends Fragment {
 
 
 
-            JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
+
             final String title = doc_details.getString("title");
             final String id  = doc_details.getString("id");
             final String path  = doc_details.getString("path");
@@ -114,7 +120,7 @@ public class DocumentFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 //                        request persmissions
-                        if (permissions()) {
+                        if (HelperFunctions.permissions(getActivity())) {
                             PromptDownloadDialog(progressBar, loading, id, title, ImageViewDownload,null,"slideshare", ImageViewDelete);
                         }else {
                             ActivityCompat.requestPermissions(getActivity(),
@@ -138,7 +144,7 @@ public class DocumentFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
 //                            Log.e("REMOVEDDD",jsonOfVideos.remove(count).toString());
-                            new deleteFromDbAndStorage(FeedReaderContract.FeedEntry.TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view).execute();
+                            new HelperFunctions.deleteFromDbAndStorage(FeedReaderContract.FeedEntry.TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view,getActivity()).execute();
 
 
                         }
@@ -166,9 +172,15 @@ public class DocumentFragment extends Fragment {
 
     private void LoadPortalDocs(final LinearLayout parent, final JSONArray jsonOfDocuments) throws Exception{
 
-
+        String selected_course =((LibraryActivity) getActivity()).selected_course;
         for (int i = 0; i < jsonOfDocuments.length(); i++) {
 //            Log.w("decipher",jsonOfVideos.getJSONObject(i).toString());
+
+            JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
+            String course = doc_details.getString("course");
+            if(!course.equals(selected_course)){
+                continue;
+            }
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             final View view = inflater.inflate(R.layout.saveddocument,null);
             TextView textViewTitle = view.findViewById(R.id.title);
@@ -184,7 +196,7 @@ public class DocumentFragment extends Fragment {
             ImageViewSource.setImageDrawable(getResources().getDrawable(R.drawable.unilus));
 
 
-            JSONObject doc_details = new JSONObject(jsonOfDocuments.getString(i));
+
             final String title = doc_details.getString("title");
             final String id  = doc_details.getString("id");
             final String url  = doc_details.getString("url");
@@ -197,7 +209,7 @@ public class DocumentFragment extends Fragment {
                 clickable.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        openFile(path);
+                        HelperFunctions.openFile(path,getActivity());
                     }
                 });
             }else {
@@ -208,7 +220,7 @@ public class DocumentFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 //                        request persmissions
-                        if (permissions()) {
+                        if (HelperFunctions.permissions(getActivity())) {
                             PromptDownloadDialog(progressBar, loading, id, title, ImageViewDownload, url, "unilus", ImageViewDownloaded);
                         } else {
                             ActivityCompat.requestPermissions(getActivity(),
@@ -230,7 +242,7 @@ public class DocumentFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 //                            Log.e("REMOVEDDD",jsonOfVideos.remove(count).toString());
-                        new deleteFromDbAndStorage(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view).execute();
+                        new HelperFunctions.deleteFromDbAndStorage(FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME,id, FeedReaderContract.FeedEntry.COLUMN_NAME_ID,path,parent,view,getActivity()).execute();
                     }
                 }).setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
@@ -264,70 +276,13 @@ public class DocumentFragment extends Fragment {
 
 
 
-    private class deleteFromDbAndStorage extends AsyncTask{
-        String table;
-        String id;
-        String column;
-        String path;
-        boolean success;
-        View view;
-        View parent;
-        private boolean deleteFile(String path) throws Exception{
-            File dir = new File(Globals.folder);
-            File file=new File(dir,path);
-            file.delete();
-            return true;
-        }
-        public deleteFromDbAndStorage(String table, String id, String column,String path, View parent, View view){
-            this.table=table;this.view = view;this.parent=parent;
-            this.id=id;
-            this.path=path;
-            this.column=column;
-        }
 
-        @Override
-        protected void onPostExecute(Object o) {
-            if(success){
-                ((LinearLayout) parent).removeView(view);
-                Toast.makeText(getActivity(),"Deleted",Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects){
-
-            try {
-                boolean deleteFromdb = new SQL_INTERACT(getActivity()).DeleteEntry(id,table,column);
-                //this part is dangerously iffy
-                if (deleteFromdb || deleteFile(path)) {
-                    success=true;
-//                hanlde response
-                }
-            }catch (Exception e){
-
-            }
-
-
-            return null;
-        }
-    }
 
 
 
 
 //    check permissions
-    public boolean permissions(){
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted...request now
-            return false;
 
-
-        }else {
-            return true;
-    }
-
-    }
 
     @Override
     public void
@@ -378,7 +333,9 @@ public class DocumentFragment extends Fragment {
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                Pair<Boolean, Integer> getmaterial = new GetMaterial(getContext(), "ECF300").startConnect();
+
+                String selected_course =((LibraryActivity) getActivity()).selected_course;
+                Pair<Boolean, Integer> getmaterial = new GetMaterial(getContext(), selected_course).startConnect();
             }catch (Exception e){
                 Log.w("CC",e.toString());
             }

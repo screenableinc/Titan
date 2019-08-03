@@ -98,14 +98,17 @@ public class DownloadFile extends AsyncTask {
             int lengthOfFile = conn.getContentLength();
             InputStream input = new BufferedInputStream(url.openStream(),8192);
 //            if not file.exists
-            File directory;
-            String path;
+            File directory=new File("");
+            String path="";
             if(source.equals("slideshare")){
              directory= new File(slideshare_folder);
              path=slideshare_folder+ File.separator+filename;
-            }else {
+            }else if(source.equals("unilus")){
                 directory=new File(unilus_folder);
                 path=unilus_folder+ File.separator+filename;
+            }else if(source.equals("qb")) {
+                directory=new File(unilus_folder+File.separator+"qb");
+                path=unilus_folder+ File.separator+"qb"+File.separator+filename;
             }
 
             if (!directory.exists()) {
@@ -138,11 +141,13 @@ public class DownloadFile extends AsyncTask {
             // closing streams
             output.close();
             input.close();
-            String table;
+            String table="";
             if(source.equals("slideshare")){
                 table= FeedReaderContract.FeedEntry.TABLE_NAME;
-            }else {
+            }else if(source.equals("unilus")) {
                 table= FeedReaderContract.FeedEntry.UNILUS_DOC_TABLE_NAME;
+            }else if(source.equals("qb")){
+                table= FeedReaderContract.FeedEntry.QB_TABLE_NAME;
             }
             new SQL_INTERACT(context).setPath(id,path,table);
 

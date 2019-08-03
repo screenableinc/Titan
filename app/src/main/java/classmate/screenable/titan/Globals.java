@@ -22,7 +22,7 @@ public class Globals {
     protected static String profile_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+File.separator+"profile";
     protected static String unilus_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+File.separator+"unilus";
     protected static String slideshare_folder = Environment.getExternalStorageDirectory() + File.separator + "classmate"+ File.separator+"slideshare";
-
+    protected static String question_bank_url = "https://sms.unilus.ac.zm/Students/QuestionBank.aspx";
 
     protected static final String theme_lawrencium = "lawrencium";
     protected static final String host = "https://www.unilus.ac.zm";

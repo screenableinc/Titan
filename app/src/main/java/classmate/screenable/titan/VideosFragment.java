@@ -26,6 +26,7 @@ import classmate.screenable.titan.R;
 
 public class VideosFragment extends Fragment {
     String videos;
+    LinearLayout parent;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,7 +34,12 @@ public class VideosFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.videos, container, false);
         SharedPreferences preferences = getActivity().getSharedPreferences("library",Context.MODE_PRIVATE);
         videos = preferences.getString(Globals.CATEGORY_VID_SHAREDPREF_KEY_NAME, "[]");
-        LinearLayout parent = rootView.findViewById(R.id.parent);
+         parent = rootView.findViewById(R.id.parent);
+
+
+
+
+
         try {
 
 
@@ -48,14 +54,29 @@ public class VideosFragment extends Fragment {
         return rootView;
     }
 
+    public void LoadFromActivity(){
+        try {
+
+
+            LoadVideos(parent);
+        }catch (Exception e){
+            Log.w("TODO", e.toString());
+        }
+    }
 
 
 
     private void LoadVideos(final LinearLayout parent) throws Exception{
-        Log.w("decipher",videos);
+        parent.removeAllViews();
         final JSONArray jsonOfVideos = new JSONArray(videos);
+        String selected_course =((LibraryActivity) getActivity()).selected_course;
         for (int i = 0; i < jsonOfVideos.length(); i++) {
 //            Log.w("decipher",jsonOfVideos.getJSONObject(i).toString());
+            JSONObject video = new JSONObject(jsonOfVideos.getString(i));
+            String course = video.getString("course");
+            if(!course.equals(selected_course)){
+                continue;
+            }
             LayoutInflater inflater = LayoutInflater.from(getActivity());
             final View view = inflater.inflate(R.layout.savedvideo,null);
             TextView textViewTitle = view.findViewById(R.id.title);
@@ -64,7 +85,7 @@ public class VideosFragment extends Fragment {
             LinearLayout clickable = view.findViewById(R.id.clickable);
             final int count=i;
 
-            JSONObject video = new JSONObject(jsonOfVideos.getString(i));
+
             JSONObject snippet = video.getJSONObject("snippet");
             String id  = video.getJSONObject("id").getString("videoId");
 

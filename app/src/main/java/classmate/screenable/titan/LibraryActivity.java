@@ -9,24 +9,62 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Pair;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.util.List;
 
 public class LibraryActivity extends AppCompatActivity {
 
 /*    TODO
         in future....update to use recyclerview
  */
-
+    private Spinner courses;
+    public static String selected_course;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        final SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        final ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
+        courses = (Spinner) findViewById(R.id.course);
         tabs.setupWithViewPager(viewPager);
+
+        try {
+            Pair<List<String>, List<String>> pair = new GetCoursesFromPreference(LibraryActivity.this).codeAndName();
+            final List<String> course_codes =pair.first;
+            final ArrayAdapter<String> time_adapter = new ArrayAdapter<String>(LibraryActivity.this,android.R.layout.simple_spinner_dropdown_item,course_codes);
+            time_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            courses.setAdapter(time_adapter);
+            courses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    selected_course=course_codes.get(i);
+                    VideosFragment videosFragment = (VideosFragment) sectionsPagerAdapter.instantiateItem(viewPager, 1);
+                    DocumentFragment documentFragment = (DocumentFragment) sectionsPagerAdapter.instantiateItem(viewPager, 0);
+                    AssignmentsFragment assignmentsFragment = (AssignmentsFragment) sectionsPagerAdapter.instantiateItem(viewPager, 2);
+                    PastPapersFragment pastPapersFragment = (PastPapersFragment) sectionsPagerAdapter.instantiateItem(viewPager, 3);
+                    videosFragment.LoadFromActivity();pastPapersFragment.LoadFromActivity();documentFragment.LoadFromActivity();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                }
+            });
+        }catch (Exception e){
+//            TODO log error
+            Toast.makeText(LibraryActivity.this,"failed to make spinner, developer notified", Toast.LENGTH_LONG).show();
+        }
+
+
         FloatingActionButton fab = findViewById(R.id.fab);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -56,9 +94,9 @@ public class LibraryActivity extends AppCompatActivity {
                 case 1:
                     return new VideosFragment();
                 case 2:
-                    return new PastPapersFragment();
-                case 3:
                     return new AssignmentsFragment();
+                case 3:
+                    return new PastPapersFragment();
                 default:
                     return null;
             }

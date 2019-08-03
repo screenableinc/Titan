@@ -13,16 +13,23 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private CircleImageView profile_image;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,17 +65,22 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager =  findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        profile_image = (CircleImageView) findViewById(R.id.profile_image);
+        profile_image = findViewById(R.id.profile_image);
+
         SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
         File path = new File(Globals.profile_folder+File.separator+preferences.getString(Globals.id_keyName,"")+".jpg");
         if(path.exists()){
+
 //            Picasso.get().load(path).resize(50,50).onlyScaleDown().into(profile_image);
             Bitmap bitmapImage = BitmapFactory.decodeFile(path.toString());
-            int nh = (int) ( bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()) );
+            if(bitmapImage==null){
+                profile_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_black_24dp));
+            }else{
+//            int nh = (int) ( bitmapImage.getHeight() * (512.0 / bitmapImage.getWidth()) );
             Bitmap scaled = Bitmap.createScaledBitmap(bitmapImage, 50, 50, true);
-            profile_image.setImageBitmap(scaled);
+            profile_image.setImageBitmap(scaled);}
         }else {
             new DownloadProfileImage().execute();
         }
@@ -103,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 Performance fragment = (Performance)mSectionsPagerAdapter.instantiateItem(mViewPager, 1);
                 if(positionOffset>0.99f){
                     if (fragment != null) {
+
                         fragment.onFragmentEntered();
                     }
                     lastPosition = position;
