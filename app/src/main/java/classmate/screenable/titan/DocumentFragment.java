@@ -44,6 +44,7 @@ public class DocumentFragment extends Fragment {
     String documents;
     LinearLayout parent;
     private static final int REQUEST_WRITE_STORAGE = 0;
+    FloatingActionButton floatingActionButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +56,7 @@ public class DocumentFragment extends Fragment {
         new LoadDocs().execute();
         new LoadPortalDocs().execute();
 
-        FloatingActionButton floatingActionButton = rootView.findViewById(R.id.floatingActionButton);
+        floatingActionButton = rootView.findViewById(R.id.floatingActionButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -330,6 +331,13 @@ public class DocumentFragment extends Fragment {
     }
 
     public class SyncPortalMaterial extends AsyncTask{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            floatingActionButton.setVisibility(View.GONE);
+        }
+
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
@@ -340,6 +348,12 @@ public class DocumentFragment extends Fragment {
                 Log.w("CC",e.toString());
             }
                 return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            floatingActionButton.setVisibility(View.VISIBLE);
         }
     }
 

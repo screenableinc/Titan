@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -102,15 +103,24 @@ public class Setup extends AppCompatActivity {
 //                no error proceed to main page
                 startActivity(new Intent(Setup.this,MainActivity.class));
                 finish();
+                SharedPreferences.Editor preferences = getSharedPreferences("setup",MODE_PRIVATE).edit();
+                preferences.putBoolean(Globals.SETUP_COMPLETE_KEY_NAME,true);
+                preferences.commit();
             }catch (NetworkErrorException e){
+//                sedn back to login screen
                 Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(Setup.this,LoginActivity.class));
+                finish();
+
             }
+
             catch (Exception e){
                 Log.w("ERRORLOG",e.toString());
                 e.printStackTrace();
 
                 new ErrorRecorder(getApplicationContext(),e,"high");
-
+                startActivity(new Intent(Setup.this,LoginActivity.class));
+                finish();
 //                Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
             }
 
@@ -118,3 +128,7 @@ public class Setup extends AppCompatActivity {
         }
     }
 }
+
+
+/*TODO:::remove logs
+*/

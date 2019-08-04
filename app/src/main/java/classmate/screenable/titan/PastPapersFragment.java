@@ -33,12 +33,13 @@ import java.io.File;
 public class PastPapersFragment extends Fragment {
     private static final int REQUEST_WRITE_STORAGE = 0;
     LinearLayout parent;
+    FloatingActionButton floatingActionButton;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.pastpapers, container, false);
-        FloatingActionButton floatingActionButton = rootView.findViewById(R.id.syncpastpapers);
+        floatingActionButton = rootView.findViewById(R.id.syncpastpapers);
         new LoadPastPapers().execute();
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +214,13 @@ public class PastPapersFragment extends Fragment {
     }
 
     public class SyncQuestions extends AsyncTask{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            floatingActionButton.setVisibility(View.GONE);
+        }
+
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
@@ -222,6 +230,12 @@ public class PastPapersFragment extends Fragment {
                 Log.w("CC",e.toString());
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            floatingActionButton.setVisibility(View.VISIBLE);
         }
     }
 

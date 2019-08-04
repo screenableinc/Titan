@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
@@ -98,14 +99,37 @@ public class MainActivity extends AppCompatActivity {
 
         goto_library.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),LibraryActivity.class));
+            public void onClick(final View view) {
+                view.setBackgroundResource(R.color.colorWarning);
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        view.setBackgroundResource(R.color.colorAccent);
+                        Intent mainIntent = new Intent(MainActivity.this,LibraryActivity.class);
+
+                        MainActivity.this.startActivity(mainIntent);
+
+                    }
+                }, 50);
+
             }
         });
         goto_search.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,Search.class));
+            public void onClick(final View view) {
+                view.setBackgroundResource(R.color.colorWarning);
+                new Handler().postDelayed(new Runnable(){
+                    @Override
+                    public void run() {
+                        view.setBackgroundResource(R.color.colorAccent);
+                        Intent mainIntent = new Intent(MainActivity.this,Search.class);
+
+                        MainActivity.this.startActivity(mainIntent);
+
+                    }
+                }, 50);
+
+
             }
         });
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

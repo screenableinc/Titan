@@ -32,6 +32,7 @@ public class Globals {
 
     protected static final String id_keyName = "student_id";
     protected static final String CATEGORY_VID_SHAREDPREF_KEY_NAME = "videos";
+    protected static final String SETUP_COMPLETE_KEY_NAME = "setup_complete";
     protected static final String CATEGORY_SLIDE_SHAREDPREF_KEY_NAME = "slides";
     protected static final String passwordKeyName = "password";
     protected static final String registered_courses_url = "https://sms.unilus.ac.zm/Students/Registration.aspx";

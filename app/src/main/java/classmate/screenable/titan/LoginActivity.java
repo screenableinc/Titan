@@ -71,15 +71,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.student_id);
 
-        SharedPreferences preferences = getSharedPreferences("credentials",MODE_PRIVATE);
-        boolean loggedin = preferences.getBoolean("loggedin",false);
-//        TODO::::remember ti remove this
-//        startActivity(new Intent(LoginActivity.this,LibraryActivity.class));
-//        finish();
-        if (loggedin) {
 
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        }
         mPasswordView = (EditText) findViewById(R.id.password);
 //        new SendErrors(getApplicationContext()).execute();
 
@@ -260,16 +252,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (login){
 //                    go to setup screen and collect all data
                     startActivity(new Intent(LoginActivity.this,Setup.class));
+//                    cant go back
+                    finish();
                 }else {
 //                    return credential error
                     Toast.makeText(getApplicationContext(),"Error with credentials", Toast.LENGTH_LONG).show();
                 }
             }catch (NetworkErrorException e){
-                Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+                    }
+                });
             }catch (Exception e){
 
                 new ErrorRecorder(getApplicationContext(),e,"high");
-                Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
+
+                    }
+                });
 
             }
             return false;

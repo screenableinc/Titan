@@ -22,8 +22,8 @@
         android:id="@+id/syncpastpapers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="15dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="15dp"
         android:layout_marginBottom="15dp"
         android:clickable="true"
         app:srcCompat="@drawable/sync_24dp" />
