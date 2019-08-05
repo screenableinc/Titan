@@ -256,7 +256,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     finish();
                 }else {
 //                    return credential error
-                    Toast.makeText(getApplicationContext(),"Error with credentials", Toast.LENGTH_LONG).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"Error with credentials", Toast.LENGTH_LONG).show();
+                        }
+                    });
+
                 }
             }catch (NetworkErrorException e){
 

@@ -108,7 +108,13 @@ public class Setup extends AppCompatActivity {
                 preferences.commit();
             }catch (NetworkErrorException e){
 //                sedn back to login screen
-                Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),"Network error", Toast.LENGTH_LONG).show();
+                    }
+                });
+
                 startActivity(new Intent(Setup.this,LoginActivity.class));
                 finish();
 

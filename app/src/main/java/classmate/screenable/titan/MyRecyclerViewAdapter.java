@@ -233,11 +233,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
+                        Toast.makeText(context,"failed to add to playlist",Toast.LENGTH_SHORT).show();
 
                         icon.setVisibility(View.VISIBLE);
                     }
                 });
-                Toast.makeText(context,"failed to add to playlist",Toast.LENGTH_SHORT).show();
+
             }
 
             return null;

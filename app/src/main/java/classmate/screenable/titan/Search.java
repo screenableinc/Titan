@@ -122,13 +122,25 @@ public class Search extends AppCompatActivity {
                     items.add(array.getString(i));
                 }
             }catch (NetworkErrorException e){
-                Toast.makeText(Search.this,"Network error", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Search.this,"Network error", Toast.LENGTH_LONG).show();
+                    }
+                });
+
             }catch (SocketTimeoutException e){
 
             }
             catch (Exception e){
                 new ErrorRecorder(Search.this,e,"high");
-                Toast.makeText(Search.this,"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(Search.this,"Unexpected error, we have been notified", Toast.LENGTH_LONG).show();
+                    }
+                });
+
 
 
             }
