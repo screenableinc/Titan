@@ -19,6 +19,8 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 
 public class RegOnClassmateDbAndGetClasses {
+    final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36";
+
     public Pair<Boolean,Integer> access(Context context) throws Exception{
 //        buld queryString list in youtube class
         SharedPreferences preferences = context.getSharedPreferences("setup",Context.MODE_PRIVATE);
@@ -44,7 +46,7 @@ public class RegOnClassmateDbAndGetClasses {
         params.add("year="+year);
         params.add("semester="+semester);
         params.add("courses="+ URLEncoder.encode(array.toString(),"UTF-8"));
-        params.add("program="+program);
+        params.add("program="+URLEncoder.encode(program,"UTF-8"));
 
         String qString = qStringGen.qString(params);
 
@@ -52,6 +54,10 @@ public class RegOnClassmateDbAndGetClasses {
         Log.w("TODO",Globals.api_classmate_url+qString);
 
         HttpURLConnection conn = (HttpURLConnection) Obj.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("User-Agent",USER_AGENT);
+        conn.setRequestProperty("Accept","*/*");
+
         int responseCode = conn.getResponseCode();
 
 

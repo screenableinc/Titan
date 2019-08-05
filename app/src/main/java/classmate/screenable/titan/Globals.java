@@ -12,7 +12,7 @@ public class Globals {
 
 //    youtube
     protected static String prefix="http://classmateapi.screenableinc.com";
-//    protected static String prefix="http://192.168.10.101:3000";
+//    protected static String prefix="http://192.168.10.105:3000";
     protected static String api_search_url = "https://www.googleapis.com/youtube/v3/search?";
     protected static String api_slideshare_url = "https://www.slideshare.net/api/2/";
     protected static String api_classmate_url=prefix+"/setup?";
@@ -36,7 +36,7 @@ public class Globals {
     protected static final String CATEGORY_SLIDE_SHAREDPREF_KEY_NAME = "slides";
     protected static final String passwordKeyName = "password";
     protected static final String registered_courses_url = "https://sms.unilus.ac.zm/Students/Registration.aspx";
-    protected static final String materials_url = "https:/sms.unilus.ac.zm/Students/Materials.aspx";
+    protected static final String materials_url = "https://sms.unilus.ac.zm/Students/Materials.aspx";
     protected static final String registration_url = "https://sms.unilus.ac.zm/Students/RegistrationForm.aspx";
     protected static final String lectscon_url = "https://sms.unilus.ac.zm/Students/LecturerContact.aspx";
     protected static final String login_url = "https://sms.unilus.ac.zm/Students/Login.aspx";

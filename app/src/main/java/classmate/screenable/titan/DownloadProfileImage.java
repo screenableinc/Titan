@@ -112,6 +112,7 @@ public class DownloadProfileImage {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
+                    view.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_person_black_24dp));
 
                     Toast.makeText(context,"failed getting profile picture",Toast.LENGTH_LONG).show();
                 }

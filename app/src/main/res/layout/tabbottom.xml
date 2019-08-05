@@ -23,9 +23,9 @@
                 android:id="@+id/profile_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/pp"
-                app:civ_border_color="#FF000000"
                 android:layout_gravity="center"
+                android:src="@drawable/ic_person_black_24dp"
+                app:civ_border_color="#FF000000"
                 app:civ_border_width="2dp" />
 
             <TextView
