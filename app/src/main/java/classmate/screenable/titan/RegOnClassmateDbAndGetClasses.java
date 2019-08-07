@@ -51,7 +51,7 @@ public class RegOnClassmateDbAndGetClasses {
         String qString = qStringGen.qString(params);
 
         URL Obj = new URL(Globals.api_classmate_url+qString);
-        Log.w("TODO",Globals.api_classmate_url+qString);
+
 
         HttpURLConnection conn = (HttpURLConnection) Obj.openConnection();
         conn.setRequestMethod("GET");
@@ -76,6 +76,7 @@ public class RegOnClassmateDbAndGetClasses {
         if(object.getBoolean("success")){
             SharedPreferences.Editor editor = context.getSharedPreferences("setup",Context.MODE_PRIVATE).edit();
             editor.putString("timetable",object.getString("data"));
+            editor.putString("free_classes",object.getString("free_classes"));
             editor.commit();
 
             return new Pair<>(true,100);

@@ -159,6 +159,36 @@
 
             </FrameLayout>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/sync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="0dp"
+            android:orientation="vertical"
+            android:paddingTop="10dp">
+
+            <ImageView
+
+                android:layout_width="24dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/sync_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="update"
+                android:textColor="@android:color/white" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="10dp"
+                android:background="@android:color/white">
+
+            </FrameLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>

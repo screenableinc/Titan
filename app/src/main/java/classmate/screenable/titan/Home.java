@@ -57,6 +57,7 @@ public class Home extends Fragment {
         backgrounds=_backgrounds;
 
 
+
         if(courses==null){
             Log.w("TODO","error with courses");
         }else {
@@ -87,6 +88,7 @@ public class Home extends Fragment {
 
 //        DAYSPNNER_____________________
         Spinner day_spinner = (Spinner) rootView.findViewById(R.id.whatday);
+
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> days_adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.daysofweek, android.R.layout.simple_spinner_item);
@@ -94,6 +96,8 @@ public class Home extends Fragment {
         days_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         day_spinner.setAdapter(days_adapter);
+        day_spinner.setSelection(dayofweek-1);
+
         day_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -147,6 +151,7 @@ public class Home extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
+        spinner.setSelection(dayofweek-1);
 
 
 //        set value of spinner

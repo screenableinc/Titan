@@ -31,6 +31,7 @@ public class Splash extends AppCompatActivity {
         Context context;
         SharedPreferences preferences = getSharedPreferences("setup",MODE_PRIVATE);
         boolean setup_complete = preferences.getBoolean(Globals.SETUP_COMPLETE_KEY_NAME,false);
+
         if(setup_complete){
             new Handler().postDelayed(new Runnable(){
                 @Override

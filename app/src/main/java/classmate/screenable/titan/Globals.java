@@ -11,10 +11,16 @@ import java.io.File;
 public class Globals {
 
 //    youtube
+//    protected static String prefix="http://192.168.43.96:3000";
     protected static String prefix="http://classmateapi.screenableinc.com";
-//    protected static String prefix="http://192.168.10.105:3000";
+    protected static String version_check_url=prefix+"/getappversion";
+    protected static String update_classes_url=prefix+"/updateclasses?";
+    protected static String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36";
+
+
     protected static String api_search_url = "https://www.googleapis.com/youtube/v3/search?";
     protected static String api_slideshare_url = "https://www.slideshare.net/api/2/";
+
     protected static String api_classmate_url=prefix+"/setup?";
     protected static String api_error_report=prefix+"/reportError?";
     protected static String youtube_video_watch = "https://www.youtube.com/watch?v=";
@@ -43,7 +49,9 @@ public class Globals {
     protected static final String viewca_url = "https://sms.unilus.ac.zm/Students/ViewCA.aspx";
     protected static final String viewfinal_url = "https://sms.unilus.ac.zm/Students/ViewResults.aspx";
     protected static final String assignments_url = "https://sms.unilus.ac.zm/Students/Assignments.aspx";
-    protected static final String APP_VERSION_NUMBER = "1.0";
+    protected static final String APP_VERSION_NUMBER = "2.0.0";
+    protected static final String APP_DOWNLOAD_LINK = "https://github.com/screenableinc/Titan/raw/master/app/release/app-release.apk";
+
     protected static final String DEBUG_TAG="DEBUGTITAN";
     protected static final String ERROR="ERROR";
     protected static final String AMBIG_ERROR_MESSAGE="SOMETHING WENT WRONG";

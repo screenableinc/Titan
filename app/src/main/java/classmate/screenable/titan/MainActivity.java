@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private CircleImageView profile_image;
-
+    private LinearLayout sync;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
+
+//        new HelperFunctions.CheckVersion(MainActivity.this).execute();
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        new SendErrors(getApplicationContext()).execute();
 
         // Set up the ViewPager with the sections adapter.
         mViewPager =  findViewById(R.id.container);
@@ -90,6 +93,14 @@ public class MainActivity extends AppCompatActivity {
 //        while (program.startsWith(" ")){
 //            program=program.substring(1);
 //        }
+
+        sync = (LinearLayout) findViewById(R.id.sync);
+        sync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new HelperFunctions.UpdateClasses(MainActivity.this, sync).execute();
+            }
+        });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);

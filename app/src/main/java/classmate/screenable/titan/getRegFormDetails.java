@@ -105,6 +105,7 @@ public class getRegFormDetails{
                 }else if (mode.contains("dist")){
                     mode="distance";
                 }
+
                 preferences.putString("mode", mode);mode_gotten=true;
 
             }else if(td.text().toLowerCase().contains(keys[2])){

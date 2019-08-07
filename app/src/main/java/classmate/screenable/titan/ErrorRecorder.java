@@ -28,9 +28,10 @@ public class ErrorRecorder {
         JSONObject object = new JSONObject();
         object.put("class",errorclass);
         object.put("method",errormethod);
-        object.put("message", exception.toString());
+        object.put("message", exception.getStackTrace()+"");
         object.put("timestamp", unixTime);
         object.put("severity", severity);
+        object.put("version",Globals.APP_VERSION_NUMBER);
         array.put(object);
         editor.putString("errors",array.toString());
         editor.commit();

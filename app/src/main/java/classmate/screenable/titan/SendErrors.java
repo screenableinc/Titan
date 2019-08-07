@@ -41,6 +41,7 @@ public class SendErrors  extends AsyncTask<String, Integer, String> {
         String errors = context.getSharedPreferences("errors", Context.MODE_PRIVATE).getString("errors", "[]");
         String student_id = credentials.getString(Globals.id_keyName, null);
         if (errors.equals("[]")){
+            Log.w("TODO_ironic","no errors");
             return null;
         }
 
@@ -56,6 +57,9 @@ public class SendErrors  extends AsyncTask<String, Integer, String> {
 
             HttpURLConnection conn = (HttpURLConnection) Obj.openConnection();
             int responseCode = conn.getResponseCode();
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+            conn.connect();
 
 
             BufferedReader in =
